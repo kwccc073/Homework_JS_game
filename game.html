@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翻牌作業</title>
+    <style>
+        .card {
+            width: 50px;
+            height: 90px;
+            position: relative;
+            margin: 10px;
+            /* 設定子元素在3D空間內 */
+            transform-style: preserve-3d;
+            /* 使他們並排 */
+            float: left;
+            transition: transform 1s;
+        }
+
+        .card-front {
+            width: 100%;
+            height: 100%;
+            background: yellow;
+            position: absolute;
+            /* 把背面隱藏 */
+            backface-visibility: hidden;
+            text-align: center;
+            /* 垂直置中 */
+            font-size: 35px;
+        }
+
+        .card-back {
+            width: 100%;
+            height: 100%;
+            background-image: url(./素材/cards/Red_back.jpg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            backface-visibility: hidden;
+            /* 預設180deg，讓他翻到背面 */
+            transform: rotateY(180deg);
+        }
+
+        .card-close {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+
+<body>
+    <button id="game_start">遊戲開始</button>
+    <!-- 遊戲區域 -->
+
+    <div id="game"></div>
+
+
+
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        // 花色陣列
+        // 平假名
+        const Hiragana = ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み', 'む', 'め', 'も', 'や', 'ゆ', 'よ', 'ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん']
+        //片假名
+        const Katakana = ['ア', 'イ', 'ウ', 'エ', 'オ', 'カ', 'キ', 'ク', 'ケ', 'コ', 'サ', 'シ', 'ス', 'セ', 'ソ', 'タ', 'チ', 'ツ', 'テ', 'ト', 'ナ', '二', 'ヌ', 'ネ', 'ノ', 'ハ', 'ヒ', 'フ', 'ヘ', 'ホ', 'マ', 'ミ', 'ム', 'メ', 'モ', 'ヤ', 'ユ', 'ヨ', 'ラ', 'リ', 'ル', 'レ', 'ロ', 'ワ', 'ン', 'ヲ']
+        // 拼音
+        const Pinyin = ['a', 'i', 'u', 'e', 'o', 'ka', 'ki', 'ku', 'ke', 'ko', 'sa', 'shi', 'su', 'se', 'so', 'ta', 'chi', 'tsu', 'te', 'to', 'na', 'ni', 'nu', 'ne', 'no', 'ha', 'hi', 'fu', 'he', 'ho', 'ma', 'mi', 'mu', 'me', 'mo', 'ya', 'yu', 'yo', 'ra', 'ri', 'ru', 're', 'ro', 'wa', 'wo', 'n']
+
+
+        // 按下開始按鈕，產生隨機排列的卡片
+        $('#game_start').click(function () {
+            // 按鈕停用設定
+            $(this).attr('disabled', true)
+
+            // 文字顯示=====待編輯====
+            let bingo = 0
+            // 可能需要響應式
+            $('#game').append(`
+            <div>答對${bingo}題</div>
+            `)
+
+
+            // 產生二十張卡片***可加發牌動畫
+            for (let i = 0; i < 20; i++) {
+                $('#game').append(`
+            <div class="card card-close">
+                <div class="card-front"></div>
+                <div class="card-back"></div>
+            </div>
+            `)
+            }
+
+            // 隨機分配花色
+            // random陣列用於避免取道重複的花色
+            let random = []
+            // 總共取出十組花色 (20/2=10)
+            for (let i = 0; i < 10; i++) {
+                // 隨機取一個數字做為花色陣列之index
+                let randomNumber = Math.round(Math.random() * 45)
+
+                // 如果這個數字還沒出現過，則進行下方步驟
+                if (!random.includes(randomNumber)) {
+                    random.push(randomNumber)
+                    // 前面十張(index為 0-9)
+                    $('.card-front').eq(i).text(Hiragana[randomNumber])
+                    $('.card-front').eq(i).attr('data-number', randomNumber)
+                    //後面十張(index為 10-19)***要跟平假名對稱***
+                    $('.card-front').eq(i + 10).text(Pinyin[randomNumber])
+                    $('.card-front').eq(i + 10).attr('data-number', randomNumber)
+                } else {
+                    i--
+                }
+            }
+
+            // 打亂牌
+            // for (let i = 0; i < 20; i++) {
+            //     const randA = Math.round(Math.random() * 19)
+            //     const randB = Math.round(Math.random() * 19)
+            //     $('.card').eq(randA).insertAfter($('.card').eq(randB))
+            // }
+
+            // 發牌動畫（移動位置）
+
+
+
+            // 發完牌後X秒，先全部攤開
+            // 這兩組的setTimeout會同時進行（要改成非同步）
+            setTimeout(function () {
+                $('.card').removeClass('card-close')
+            }, 2000)
+
+            // 看3秒再全部合起來
+            setTimeout(function () {
+                $('.card').addClass('card-close')
+            }, 5000)
+
+            // 這裡的.card已經出現，所以不需要用on
+            $('.card').click(function () {
+                // 翻牌動作
+                if (
+                    // 打開的牌小於兩張
+                    $('.card:not(.card-close)').length < 2 &&
+                    // 這張牌目前關起來
+                    $(this).hasClass('card-close') &&
+                    // 這張牌尚未被配對
+                    !$(this).hasClass('card-ok')
+                ) {
+                    $(this).removeClass('card-close')
+                }
+
+                // 翻開兩張牌之後，要進行判斷
+                if ($('.card:not(.card-close)').length === 2) {
+                    // 如果兩張都一樣就加上.card-ok並淡出
+                    if ($('.card:not(.card-close) .card-front').eq(0).attr('data-number') ===
+                        $('.card:not(.card-close) .card-front').eq(1).attr('data-number')
+                    ) {
+                        $('.card:not(.card-close)').addClass('card-ok')
+                        $('.card:not(.card-close)').fadeTo(1000, 0)
+                        bingo++
+                    }
+                    setTimeout(function () {
+                        // 把牌蓋起來
+                        $('.card:not(.card-close)').addClass('card-close')
+                        // 過關判斷
+                        if (
+                            $('.card-ok').length === $('.card').length
+                        ) {
+                            alert('過關')
+                        }
+                    }, 1000)
+                }
+            })
+
+        })
+
+
+
+
+
+    </script>
+</body>
+
+</html>

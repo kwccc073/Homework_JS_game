@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0430-2 </title>
+    <style>
+        .card {
+            width: 50px;
+            height: 90px;
+            position: relative;
+            margin: 10px;
+            /* 設定子元素在3D空間內 */
+            transform-style: preserve-3d;
+            /* 使他們並排 */
+            float: left;
+            transition: transform 1s;
+        }
+
+        .card-front {
+            width: 100%;
+            height: 100%;
+            background-image: url(./素材/cards/1H.jpg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            /* 把背面隱藏 */
+            backface-visibility: hidden;
+        }
+
+        .card-back {
+            width: 100%;
+            height: 100%;
+            background-image: url(./素材/cards/Red_back.jpg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: absolute;
+            backface-visibility: hidden;
+            /* 預設180deg，讓他翻到背面 */
+            transform: rotateY(180deg);
+        }
+
+        .card-close {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+
+
+
+<body>
+    <!-- <div class="card">
+        <div class="card-front"></div>
+        <div class="card-back"></div>
+    </div> -->
+
+    <div id="game"></div>
+
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        // 產生十六張卡片
+        for (let i = 0; i < 16; i++) {
+            $('#game').append(`
+            <div class="card card-close">
+                <div class="card-front"></div>
+                <div class="card-back"></div>
+            </div>
+            `)
+        }
+
+        // 換上1-8花色
+        $('.card').each(function (index) {
+            const number = index % 8 + 1
+            console.log(index, number)
+            $(this).find('.card-front').css('background-image', `url(./素材/cards/${number}H.jpg)`)
+            // 把東西暫存在標籤上面，老師自創的，用 data-要存的東西之名稱
+            $(this).attr(`data-number`, number)
+        })
+
+        // 打亂牌
+        // 不一定要20，20只是讓他隨機程度高一點
+        for (let i = 0; i < 20; i++) {
+            const randA = Math.round(Math.random() * 15)
+            const randB = Math.round(Math.random() * 15)
+            $('.card').eq(randA).insertAfter($('.card').eq(randB))
+        }
+
+        // 這裡的.card已經出現，所以不需要用on
+        $('.card').click(function () {
+            // 翻牌
+            if (
+                // .card沒有.card-close表示被翻開
+                // 翻開的牌小於兩張
+                $('.card:not(.card-close)').length < 2 &&
+                // 這張牌還沒被翻開
+                $(this).hasClass('card-close') &&
+                // 這張還沒被配對
+                !$(this).hasClass('card-ok')
+            ) {
+                $(this).removeClass('card-close')
+            }
+
+            // 翻開兩張後的判斷
+            if ($('.card:not(.card-close)').length === 2) {
+                // 我標在card裡面的card-font
+                console.log($('.card:not(.card-close)').eq(0).html())
+                console.log($('.card:not(.card-close)').eq(0).attr('data-number'))
+                console.log($('.card:not(.card-close)').eq(1).attr('data-number'))
+                // 如果兩張都一樣就加上.card-ok並淡出
+                if ($('.card:not(.card-close)').eq(0).attr('data-number') ===
+                    $('.card:not(.card-close)').eq(1).attr('data-number')
+                ) {
+                    $('.card:not(.card-close)').addClass('card-ok')
+                    $('.card:not(.card-close)').fadeTo(1000, 0)
+                }
+                setTimeout(function () {
+                    // 把牌蓋起來
+                    $('.card:not(.card-close)').addClass('card-close')
+                    // 過關判斷
+                    if (
+                        $('.card-ok').length === $('.card').length
+                    ) {
+                        alert('過關')
+                    }
+                }, 1000)
+            }
+        })
+    </script>
+</body>
+
+</html>
