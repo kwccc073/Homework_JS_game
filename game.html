@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>翻牌作業-Vue</title>
     <style>
+        #time {
+            display: none;
+            /* display會整個不見，要保留位子的方法待確認 */
+        }
+
+        #bingo {
+            display: none;
+        }
+
         /* 排列成4*5 .Arrangement*/
         #game {
             width: 1000px;
@@ -130,6 +139,11 @@
         $('#game_btn').click(function () {
             // 按鈕停用設定
             $(this).attr('disabled', true)
+
+            // 顯示剩餘時間、已答對題數
+            $('#time').css('display', 'block')
+            $('#bingo').css('display', 'block')
+
 
             // 產生二十張卡片
             for (let i = 0; i < 20; i++) {
