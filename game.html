@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>翻牌作業</title>
+    <title>翻牌作業-Vue</title>
     <style>
         /* 排列成4*5 .Arrangement*/
-        #game{
+        #game {
             width: 1000px;
             height: 700px;
             background: darkcyan;
@@ -65,16 +65,59 @@
 </head>
 
 <body>
-    <button id="game_btn">遊戲開始</button>
-    <!-- 遊戲區域 -->
+    <div id="app">
+        <button id="game_btn" @click="GameStart">遊戲開始</button>
+        <p id="time">剩餘時間：{{time}}秒</p>
+        <p id="bingo">已答對{{bingo}}題，剩餘{{bingo + 10}}題</p>
+        <!-- 遊戲區域 -->
+        <div id="game"></div>
+    </div>
 
-    <div id="game"></div>
-
-
+    <!-- 引入JQ -->
     <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- 引入Vue -->
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.27/vue.global.min.js
+        integrity="sha512-jDpwxJN+g4BhXLdba5Z1rn2MpR9L5Wp3WVf2dJt5A0mkPHnHLZHZerpyX4JC9bM0pkCL7RmAR8FwOm02h7RKFg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+        // 解構
+        const { ref, reactive, computed } = Vue
+
+        // 用到響應式數據的部分
+        Vue.createApp({
+            setup() {
+                let time = ref(30)
+                let bingo = ref(0)
+
+                // 按下開始按鈕
+                const GameStart = () => {
+                    // 前面會先攤開三秒，再計時
+                    setTimeout(() => {
+                        alert('遊戲開始')
+                        // 倒數計時
+                        const timer = setInterval(() => {
+                            time.value--
+                        }, 1000)
+                        // 0秒時結束遊戲
+                        setTimeout(() => {
+                            clearInterval(timer)
+                            alert('遊戲結束')
+                            // 這樣數字會停在1
+                        }, 30000)
+                    }, 3000);
+
+                }
+
+                return {
+                    time,
+                    bingo,
+                    GameStart
+                }
+            }
+        }).mount('#app')
+
         // 花色陣列
         // 平假名
         const Hiragana = ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み', 'む', 'め', 'も', 'や', 'ゆ', 'よ', 'ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん']
@@ -83,23 +126,10 @@
         // 拼音
         const Pinyin = ['a', 'i', 'u', 'e', 'o', 'ka', 'ki', 'ku', 'ke', 'ko', 'sa', 'shi', 'su', 'se', 'so', 'ta', 'chi', 'tsu', 'te', 'to', 'na', 'ni', 'nu', 'ne', 'no', 'ha', 'hi', 'fu', 'he', 'ho', 'ma', 'mi', 'mu', 'me', 'mo', 'ya', 'yu', 'yo', 'ra', 'ri', 'ru', 're', 'ro', 'wa', 'wo', 'n']
 
-
         // 按下開始按鈕，產生隨機排列的卡片
         $('#game_btn').click(function () {
             // 按鈕停用設定
             $(this).attr('disabled', true)
-
-            // 文字顯示=====待編輯====
-            let bingo = 0
-            let game1=30
-            // 可能需要響應式
-            $('#game').append(`
-            <p id="bingo">答對${bingo}題</p>
-            <br>
-            <p id="time">剩餘時間：${game1}秒</p>
-            `)
-
-
 
             // 產生二十張卡片
             for (let i = 0; i < 20; i++) {
@@ -145,7 +175,7 @@
 
 
             // 發完牌後X秒，先全部攤開
-            // 這兩組的setTimeout會同時進行（要改成非同步）
+            // 這兩組的setTimeout會同時進行=====待改成非同步====
             setTimeout(function () {
                 $('.card').removeClass('card-close')
             }, 1000)
@@ -153,17 +183,9 @@
             // 看3秒再全部合起來
             setTimeout(function () {
                 $('.card').addClass('card-close')
-            // 產生遊戲開始的文字再淡出=====CSS還沒加=====
+                // 產生遊戲開始的文字再淡出=====CSS還沒加=====
                 $('#game').append('<p id="game-start">遊戲開始</p>')
             }, 2000)
-
-            // 計時開始
-            
-            setInterval(function () {
-                game1--
-            }, 1000)
-
-            
 
             // 這裡的.card已經出現，所以不需要用on
             $('.card').click(function () {
@@ -187,12 +209,11 @@
                     ) {
                         $('.card:not(.card-close)').addClass('card-ok')
                         $('.card:not(.card-close)').fadeTo(1000, 0)
-                        bingo++
                     }
                     setTimeout(function () {
                         // 把牌蓋起來
                         $('.card:not(.card-close)').addClass('card-close')
-                        // 過關判斷
+                        // 答對判斷
                         if (
                             $('.card-ok').length === $('.card').length
                         ) {
