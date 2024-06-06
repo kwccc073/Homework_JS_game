@@ -6,18 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>翻牌作業</title>
     <style>
+        /* 排列成4*5 .Arrangement*/
+        #game{
+            width: 1000px;
+            height: 700px;
+            background: darkcyan;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+
         .card {
             width: 50px;
             height: 90px;
-            position: absolute;
+            position: relative;
             margin: 10px;
             /* 設定子元素在3D空間內 */
             transform-style: preserve-3d;
             /* 使他們並排 */
             float: left;
             transition: transform 1s;
-            top: 0px;
-            left: 0px;
+            /* top: 0px;
+            left: 0px; */
+
         }
 
         .card-front {
@@ -52,11 +65,10 @@
 </head>
 
 <body>
-    <button id="game_start">遊戲開始</button>
+    <button id="game_btn">遊戲開始</button>
     <!-- 遊戲區域 -->
 
     <div id="game"></div>
-    <!-- 卡片外面再包一個框，負責排版 -->
 
 
     <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
@@ -73,16 +85,20 @@
 
 
         // 按下開始按鈕，產生隨機排列的卡片
-        $('#game_start').click(function () {
+        $('#game_btn').click(function () {
             // 按鈕停用設定
             $(this).attr('disabled', true)
 
             // 文字顯示=====待編輯====
             let bingo = 0
+            let game1=30
             // 可能需要響應式
             $('#game').append(`
-            <div>答對${bingo}題</div>
+            <p id="bingo">答對${bingo}題</p>
+            <br>
+            <p id="time">剩餘時間：${game1}秒</p>
             `)
+
 
 
             // 產生二十張卡片
@@ -132,12 +148,22 @@
             // 這兩組的setTimeout會同時進行（要改成非同步）
             setTimeout(function () {
                 $('.card').removeClass('card-close')
-            }, 2000)
+            }, 1000)
 
             // 看3秒再全部合起來
             setTimeout(function () {
                 $('.card').addClass('card-close')
-            }, 5000)
+            // 產生遊戲開始的文字再淡出=====CSS還沒加=====
+                $('#game').append('<p id="game-start">遊戲開始</p>')
+            }, 2000)
+
+            // 計時開始
+            
+            setInterval(function () {
+                game1--
+            }, 1000)
+
+            
 
             // 這裡的.card已經出現，所以不需要用on
             $('.card').click(function () {
