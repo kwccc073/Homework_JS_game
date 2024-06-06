@@ -4,15 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>翻牌作業-Vue</title>
+    <title>翻牌作業</title>
     <style>
-        #time {
-            display: none;
-            /* display會整個不見，要保留位子的方法待確認 */
-        }
-
-        #bingo {
-            display: none;
+        .hidden {
+            visibility: hidden;
         }
 
         /* 排列成4*5 .Arrangement*/
@@ -76,8 +71,8 @@
 <body>
     <div id="app">
         <button id="game_btn" @click="GameStart">遊戲開始</button>
-        <p id="time">剩餘時間：{{time}}秒</p>
-        <p id="bingo">已答對{{bingo}}題，剩餘{{bingo + 10}}題</p>
+        <p id="time" class="hidden">經過時間：{{time}}秒</p>
+        <p id="bingo" class="hidden">已答對{{bingo}}題，剩餘{{bingo + 10}}題</p>
         <!-- 遊戲區域 -->
         <div id="game"></div>
     </div>
@@ -97,26 +92,25 @@
         // 用到響應式數據的部分
         Vue.createApp({
             setup() {
-                let time = ref(30)
+                let time = ref(0)
                 let bingo = ref(0)
 
                 // 按下開始按鈕
                 const GameStart = () => {
-                    // 前面會先攤開三秒，再計時
+                    // 計時
+                    // 前面會先攤開3秒，所以用setTimeout
                     setTimeout(() => {
                         alert('遊戲開始')
                         // 倒數計時
                         const timer = setInterval(() => {
-                            time.value--
+                            // 全部答對時結束計時並顯示alert
+                            if ($('.card-ok').length === $('.card').length) {
+                                clearInterval(timer)
+                                alert(`恭喜過關，總共花費${time.value}秒`)
+                            }
+                            time.value++
                         }, 1000)
-                        // 0秒時結束遊戲
-                        setTimeout(() => {
-                            clearInterval(timer)
-                            alert('遊戲結束')
-                            // 這樣數字會停在1
-                        }, 30000)
                     }, 3000);
-
                 }
 
                 return {
@@ -127,7 +121,7 @@
             }
         }).mount('#app')
 
-        // 花色陣列
+        // 牌面花色
         // 平假名
         const Hiragana = ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み', 'む', 'め', 'も', 'や', 'ゆ', 'よ', 'ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん']
         //片假名
@@ -141,8 +135,7 @@
             $(this).attr('disabled', true)
 
             // 顯示剩餘時間、已答對題數
-            $('#time').css('display', 'block')
-            $('#bingo').css('display', 'block')
+            $('.hidden').removeClass('hidden')
 
 
             // 產生二十張卡片
@@ -189,12 +182,12 @@
 
 
             // 發完牌後X秒，先全部攤開
-            // 這兩組的setTimeout會同時進行=====待改成非同步====
+            // 註：這兩組的setTimeout會同時進行=====待改成非同步====
             setTimeout(function () {
                 $('.card').removeClass('card-close')
             }, 1000)
 
-            // 看3秒再全部合起來
+            // 看2-1秒再全部合起來
             setTimeout(function () {
                 $('.card').addClass('card-close')
             }, 2000)
@@ -229,7 +222,7 @@
                         if (
                             $('.card-ok').length === $('.card').length
                         ) {
-                            alert('過關')
+                            console.log('過關')
                         }
                     }, 1000)
                 }
