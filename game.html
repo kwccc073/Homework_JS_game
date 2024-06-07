@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>翻牌作業</title>
+    <!-- 引入bootstrap -->
+    <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.css />
     <style>
         .hidden {
             visibility: hidden;
@@ -70,21 +72,32 @@
 
 <body>
     <div id="app">
+        <!-- 選擇要玩的遊戲，選完才可以按btn -->
+        <!-- <select name="" id="">
+            <option value="Hiragana">平假名</option>
+            <option value="Katakana">片假名</option>
+        </select> -->
         <button id="game_btn" @click="GameStart">遊戲開始</button>
         <p id="time" class="hidden">經過時間：{{time}}秒</p>
         <p id="bingo" class="hidden">已答對{{bingo}}題，剩餘{{bingo + 10}}題</p>
+        <!-- 進度條－bootstrap 0607的檔案7 
+        https://bootstrap5.hexschool.com/docs/5.1/components/progress/ 
+        -->
+        <div class="container">
+            <div class="progress">
+                <div class="progress-bar" style="width: 25%;">{{bingo*}}</div>
+            </div>
+        </div>
         <!-- 遊戲區域 -->
         <div id="game"></div>
     </div>
 
     <!-- 引入JQ -->
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js></script>
     <!-- 引入Vue -->
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.27/vue.global.min.js
-        integrity="sha512-jDpwxJN+g4BhXLdba5Z1rn2MpR9L5Wp3WVf2dJt5A0mkPHnHLZHZerpyX4JC9bM0pkCL7RmAR8FwOm02h7RKFg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.27/vue.global.min.js></script>
+    <!-- 引入bootsraps -->
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.js></script>
     <script>
         // 解構
         const { ref, reactive, computed } = Vue
@@ -93,7 +106,7 @@
         Vue.createApp({
             setup() {
                 let time = ref(0)
-                let bingo = ref(0)
+                let bingo = ref(1)
 
                 // 按下開始按鈕
                 const GameStart = () => {
@@ -104,12 +117,14 @@
                         // 倒數計時
                         const timer = setInterval(() => {
                             // 全部答對時結束計時並顯示alert
-                            if ($('.card-ok').length === $('.card').length) {
-                                clearInterval(timer)
-                                alert(`恭喜過關，總共花費${time.value}秒`)
-                            }
+                            // 這樣不會一完成就停止，而是每秒更新一次
+                            // if ($('.card-ok').length === $('.card').length) {
+                            //     clearInterval(timer)
+                            //     alert(`恭喜過關，總共花費${time.value}秒`)
+                            // }
                             time.value++
                         }, 1000)
+                        // if放在這裡只會跑一次
                     }, 3000);
                 }
 
@@ -124,7 +139,7 @@
         // 牌面花色
         // 平假名
         const Hiragana = ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み', 'む', 'め', 'も', 'や', 'ゆ', 'よ', 'ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん']
-        //片假名
+        // 片假名
         const Katakana = ['ア', 'イ', 'ウ', 'エ', 'オ', 'カ', 'キ', 'ク', 'ケ', 'コ', 'サ', 'シ', 'ス', 'セ', 'ソ', 'タ', 'チ', 'ツ', 'テ', 'ト', 'ナ', '二', 'ヌ', 'ネ', 'ノ', 'ハ', 'ヒ', 'フ', 'ヘ', 'ホ', 'マ', 'ミ', 'ム', 'メ', 'モ', 'ヤ', 'ユ', 'ヨ', 'ラ', 'リ', 'ル', 'レ', 'ロ', 'ワ', 'ン', 'ヲ']
         // 拼音
         const Pinyin = ['a', 'i', 'u', 'e', 'o', 'ka', 'ki', 'ku', 'ke', 'ko', 'sa', 'shi', 'su', 'se', 'so', 'ta', 'chi', 'tsu', 'te', 'to', 'na', 'ni', 'nu', 'ne', 'no', 'ha', 'hi', 'fu', 'he', 'ho', 'ma', 'mi', 'mu', 'me', 'mo', 'ya', 'yu', 'yo', 'ra', 'ri', 'ru', 're', 'ro', 'wa', 'wo', 'n']
@@ -134,7 +149,7 @@
             // 按鈕停用設定
             $(this).attr('disabled', true)
 
-            // 顯示剩餘時間、已答對題數
+            // 顯示剩餘時間、已答對題數、進度條
             $('.hidden').removeClass('hidden')
 
 
@@ -220,8 +235,9 @@
                         $('.card:not(.card-close)').addClass('card-close')
                         // 答對判斷
                         if (
-                            $('.card-ok').length === $('.card').length
+                            $('.card-ok').length === 4
                         ) {
+                            //     clearInterval(timer)
                             console.log('過關')
                         }
                     }, 1000)
