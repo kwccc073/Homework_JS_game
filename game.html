@@ -71,26 +71,32 @@
 </head>
 
 <body>
-    <div id="app">
-        <!-- 選擇要玩的遊戲，選完才可以按btn -->
-        <!-- <select name="" id="">
+    <!-- 待新增功能：
+        發牌動畫（感覺麻煩，先不要加）
+        -->
+
+    <div class="game-title">日本のゲーム</div>
+    <!-- 選擇要玩的遊戲 -->
+    <form>
+        <select id="choice-game">
             <option value="Hiragana">平假名</option>
             <option value="Katakana">片假名</option>
-        </select> -->
-        <button id="game_btn" @click="GameStart">遊戲開始</button>
-        <p id="time" class="hidden">經過時間：{{time}}秒</p>
-        <p id="bingo" class="hidden">已答對{{bingo}}題，剩餘{{bingo + 10}}題</p>
-        <!-- 進度條－bootstrap 0607的檔案7 
-        https://bootstrap5.hexschool.com/docs/5.1/components/progress/ 
-        -->
-        <div class="container">
-            <div class="progress">
-                <div class="progress-bar" style="width: 25%;">{{bingo*}}</div>
-            </div>
-        </div>
-        <!-- 遊戲區域 -->
-        <div id="game"></div>
+            <!-- 有時間的話再加單字題 -->
+        </select>
+        <input type="submit" value="開始遊戲" class="game_btn">
+    </form>
+
+    <!-- 此行應該不需要了<button class="game_btn">遊戲開始</button> -->
+    <p id="time" class="hidden">經過時間：0秒</p>
+    <p id="bingo" class="hidden">已答對0題，剩餘10題</p>
+    <!-- 進度條 -->
+    <div class="progress hidden" style="width: 80%;">
+        <div class="progress-bar" style="width: 0%;"></div>
     </div>
+    <!-- 進度條可參考bootstrap 0607的檔案7 https://bootstrap5.hexschool.com/docs/5.1/components/progress/ -->
+
+    <!-- 遊戲區域 -->
+    <div id="game"></div>
 
     <!-- 引入JQ -->
     <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js></script>
@@ -98,44 +104,8 @@
     <script src=https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.27/vue.global.min.js></script>
     <!-- 引入bootsraps -->
     <script src=https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.js></script>
+
     <script>
-        // 解構
-        const { ref, reactive, computed } = Vue
-
-        // 用到響應式數據的部分
-        Vue.createApp({
-            setup() {
-                let time = ref(0)
-                let bingo = ref(1)
-
-                // 按下開始按鈕
-                const GameStart = () => {
-                    // 計時
-                    // 前面會先攤開3秒，所以用setTimeout
-                    setTimeout(() => {
-                        alert('遊戲開始')
-                        // 倒數計時
-                        const timer = setInterval(() => {
-                            // 全部答對時結束計時並顯示alert
-                            // 這樣不會一完成就停止，而是每秒更新一次
-                            // if ($('.card-ok').length === $('.card').length) {
-                            //     clearInterval(timer)
-                            //     alert(`恭喜過關，總共花費${time.value}秒`)
-                            // }
-                            time.value++
-                        }, 1000)
-                        // if放在這裡只會跑一次
-                    }, 3000);
-                }
-
-                return {
-                    time,
-                    bingo,
-                    GameStart
-                }
-            }
-        }).mount('#app')
-
         // 牌面花色
         // 平假名
         const Hiragana = ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み', 'む', 'め', 'も', 'や', 'ゆ', 'よ', 'ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん']
@@ -144,8 +114,10 @@
         // 拼音
         const Pinyin = ['a', 'i', 'u', 'e', 'o', 'ka', 'ki', 'ku', 'ke', 'ko', 'sa', 'shi', 'su', 'se', 'so', 'ta', 'chi', 'tsu', 'te', 'to', 'na', 'ni', 'nu', 'ne', 'no', 'ha', 'hi', 'fu', 'he', 'ho', 'ma', 'mi', 'mu', 'me', 'mo', 'ya', 'yu', 'yo', 'ra', 'ri', 'ru', 're', 'ro', 'wa', 'wo', 'n']
 
+
+
         // 按下開始按鈕，產生隨機排列的卡片
-        $('#game_btn').click(function () {
+        $('.game_btn').click(function () {
             // 按鈕停用設定
             $(this).attr('disabled', true)
 
@@ -174,10 +146,17 @@
                 // 如果這個數字還沒出現過，則進行下方步驟
                 if (!random.includes(randomNumber)) {
                     random.push(randomNumber)
-                    // 前面十張(index為 0-9)
-                    $('.card-front').eq(i).text(Hiragana[randomNumber])
+                    // 前面十張是平片假名(index為 0-9)
+                    // 選擇平假名關卡
+                    if ($("#choice-game").val() === "Hiragana") {
+                        $('.card-front').eq(i).text(Hiragana[randomNumber])
+                    }
+                    // 選擇片假名關卡
+                    else if ($("#choice-game").val() === "Katakana") {
+                        $('.card-front').eq(i).text(Katakana[randomNumber])
+                    }
                     $('.card-front').eq(i).attr('data-number', randomNumber)
-                    //後面十張(index為 10-19)***要跟平假名對稱***
+                    //後面十張是羅馬拼音(index為 10-19)
                     $('.card-front').eq(i + 10).text(Pinyin[randomNumber])
                     $('.card-front').eq(i + 10).attr('data-number', randomNumber)
                 } else {
@@ -197,53 +176,83 @@
 
 
             // 發完牌後X秒，先全部攤開
-            // 註：這兩組的setTimeout會同時進行=====待改成非同步====
+            // const OpenCloseCard = async () => {
+            //     await setTimeout(function () {
+            //         $('.card').removeClass('card-close')
+            //     }, 1000)
+            //     await setTimeout(function () {
+            //         $('.card').addClass('card-close')
+            //     }, 2000)
+            // }
+
+            // 一層包一層是讓一個計時器完成才進行下一個計時器
             setTimeout(function () {
+                // 按下按鈕後一秒會將全部的牌打開
                 $('.card').removeClass('card-close')
+                // 再過兩秒會將牌關起來
+                setTimeout(function () {
+                    $('.card').addClass('card-close')
+                    // 關起來一秒後會開始計時
+                    setTimeout(() => {
+                        alert('遊戲開始')
+                        // 倒數計時
+                        let time = 0
+                        const timer = setInterval(() => {
+                            time++
+                            $('#time').text(`經過時間：${time}秒`)
+                        }, 1000)
+
+
+                        // 開始計時之後才開始進行翻牌的判斷
+
+                        // 答對題數
+                        let bingo = 0
+
+                        // 這裡的.card已經出現，所以不需要用on
+                        $('.card').click(function () {
+                            // 翻牌動作
+                            if (
+                                // 打開的牌小於兩張
+                                $('.card:not(.card-close)').length < 2 &&
+                                // 這張牌目前關起來
+                                $(this).hasClass('card-close') &&
+                                // 這張牌尚未被配對
+                                !$(this).hasClass('card-ok')
+                            ) {
+                                $(this).removeClass('card-close')
+                            }
+
+                            // 翻開兩張牌之後，要進行判斷
+                            if ($('.card:not(.card-close)').length === 2) {
+                                // 如果兩張都一樣就加上.card-ok並淡出
+                                if ($('.card:not(.card-close) .card-front').eq(0).attr('data-number') ===
+                                    $('.card:not(.card-close) .card-front').eq(1).attr('data-number')
+                                ) {
+                                    $('.card:not(.card-close)').addClass('card-ok')
+                                    $('.card:not(.card-close)').fadeTo(1000, 0)
+                                    bingo++
+                                    console.log(bingo)
+                                    $('.progress-bar').css('width', `${bingo * 10}%`)
+                                    $('#bingo').text(`已答對${bingo}題，剩餘${10 - bingo}題`)
+                                }
+                                setTimeout(function () {
+                                    // 把不對的牌蓋起來
+                                    $('.card:not(.card-close)').addClass('card-close')
+                                    // 當全部答對，結束計時並顯示alert
+                                    if (
+                                        // 正確值：($('.card-ok').length === $('.card').length)，下方=4是暫時測試用
+                                        $('.card-ok').length === 4
+                                    ) {
+                                        clearInterval(timer)
+                                        alert(`恭喜過關，總共花費${time}秒`)
+                                        // 可加放煙火動畫
+                                    }
+                                }, 1000)
+                            }
+                        })
+                    }, 1000);
+                }, 2000)
             }, 1000)
-
-            // 看2-1秒再全部合起來
-            setTimeout(function () {
-                $('.card').addClass('card-close')
-            }, 2000)
-
-            // 這裡的.card已經出現，所以不需要用on
-            $('.card').click(function () {
-                // 翻牌動作
-                if (
-                    // 打開的牌小於兩張
-                    $('.card:not(.card-close)').length < 2 &&
-                    // 這張牌目前關起來
-                    $(this).hasClass('card-close') &&
-                    // 這張牌尚未被配對
-                    !$(this).hasClass('card-ok')
-                ) {
-                    $(this).removeClass('card-close')
-                }
-
-                // 翻開兩張牌之後，要進行判斷
-                if ($('.card:not(.card-close)').length === 2) {
-                    // 如果兩張都一樣就加上.card-ok並淡出
-                    if ($('.card:not(.card-close) .card-front').eq(0).attr('data-number') ===
-                        $('.card:not(.card-close) .card-front').eq(1).attr('data-number')
-                    ) {
-                        $('.card:not(.card-close)').addClass('card-ok')
-                        $('.card:not(.card-close)').fadeTo(1000, 0)
-                    }
-                    setTimeout(function () {
-                        // 把牌蓋起來
-                        $('.card:not(.card-close)').addClass('card-close')
-                        // 答對判斷
-                        if (
-                            $('.card-ok').length === 4
-                        ) {
-                            //     clearInterval(timer)
-                            console.log('過關')
-                        }
-                    }, 1000)
-                }
-            })
-
         })
 
 
