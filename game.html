@@ -8,6 +8,8 @@
     <!-- 引入bootstrap -->
     <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.css />
     <style>
+        /* 卡片慢一點出現 */
+
         .hidden {
             visibility: hidden;
         }
@@ -17,40 +19,46 @@
             position: relative;
             width: 80vw;
             height: 80vh;
+            padding: 0;
+            margin: auto;
         }
 
-        #before-game {
+        .game-title {
             width: 100%;
             height: 30%;
-            background: darkgoldenrod;
+            /* background: darkgoldenrod; */
             position: absolute;
             left: 0;
             top: 50%;
             transform: translate(0%, -50%);
             text-align: center;
-            transition: 0.5s;
+            transition: all 1s ease-in-out;
+            z-index: 5;
         }
 
-        .top0 {
+        .shrink-move {
             top: 0;
-            background: rebeccapurple;
+            transform: translate(0%, 0%);
+            height: 15%;
+            /* visibility: hidden; */
         }
 
-        .game-title {
+        .title {
             font-size: 100px;
+        }
+
+        .title-shrink {
+            font-size: 50px;
         }
 
         /* 排列成4*5 .Arrangement*/
         #game {
-            /* width: 1000px;
-            height: 700px; */
+            width: 100%;
+            height: 75%;
             background: darkcyan;
-            /* display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap; */
+            position: absolute;
+            top: 15%;
         }
-
 
         .card {
             width: 50px;
@@ -70,7 +78,7 @@
         .card-front {
             width: 100%;
             height: 100%;
-            background: yellow;
+            background: white;
             position: absolute;
             /* 把背面隱藏 */
             backface-visibility: hidden;
@@ -100,6 +108,36 @@
         .card:hover {
             box-shadow: 0 0 5px black;
         }
+        /* 計時器----------------------------------------------------- */
+
+        #time{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: blue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: aliceblue;
+            font-size: 50px;
+            position: absolute;
+            top:50%;
+            left: 1%;
+            transform: translate(0%, -50%);
+        }
+
+        /* 進度條----------------------------------------------------- */
+        #progress {
+            width: 100%;
+            height: 30px;
+            position: absolute;
+            top: 90%;
+        }
+
+        #progress-bar {
+            width: 0%;
+            background-color: rebeccapurple;
+        }
     </style>
 </head>
 
@@ -107,9 +145,9 @@
     <!-- 待新增功能：
         發牌動畫（感覺麻煩，先不要加）
         -->
-    <div id="main" class="container position-relative">
-        <div id="before-game" class="d-flex flex-column justify-content-center align-items-center ">
-            <div class="game-title">日本語のゲーム</div>
+    <div id="main">
+        <div class="game-title d-flex flex-column justify-content-center align-items-center ">
+            <div class="title">日本語のゲーム</div>
             <!-- 選擇要玩的遊戲 -->
             <form>
                 <span>請選擇題目：</span>
@@ -120,19 +158,20 @@
                 </select>
                 <input type="submit" value="開始遊戲" class="game_btn">
             </form>
+        <!-- 計時器 -->
+        <div id="time" class="hidden">0</div>
         </div>
-        <!-- 此行應該不需要了<button class="game_btn">遊戲開始</button> -->
-        <p id="time" class="hidden">經過時間：0秒</p>
-        <p id="bingo" class="hidden">已答對0題，剩餘10題</p>
+
+        <!-- 答對題數 -->
+        <!-- <p id="bingo" class="hidden">已答對0題，剩餘10題</p> -->
 
 
         <!-- 遊戲區域 -->
-        <div id="game" class="hidden"></div>
+        <div id="game" class="hidden container-fluid"></div>
 
         <!-- 進度條 -->
-        <div class="progress hidden" style="width: 80%;height: 30px;">
-            <div class="progress-bar progress-bar-striped progress-bar-animated"
-                style="width: 0%;background-color: rebeccapurple;"></div>
+        <div id="progress" class="progress hidden mt-1">
+            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"></div>
         </div>
     </div>
     <!-- 進度條可參考bootstrap 0607的檔案7 https://bootstrap5.hexschool.com/docs/5.1/components/progress/ -->
@@ -162,7 +201,10 @@
             $('#choice-game').attr('disabled', true)
 
             // 遊戲標題區移動至最上方
-            $('#before-game').addClass('top0')
+            $('.game-title').addClass('shrink-move')
+            // 標題區裡的文字縮小
+            $('.title').addClass('title-shrink')
+
 
             // 顯示剩餘時間、已答對題數、進度條
             $('.hidden').removeClass('hidden')
@@ -171,26 +213,26 @@
             // 產生二十張卡片
             for (let i = 0; i < 5; i++) {
                 $('#game').append(`
-            <div class="row">
-                <div class="col-3">
+                        <div class="row">
+                <div class="col-3 d-flex justify-content-center">
                     <div class="card card-close">
                         <div class="card-front"></div>
                         <div class="card-back"></div>
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-3 d-flex justify-content-center">
                     <div class="card card-close">
                         <div class="card-front"></div>
                         <div class="card-back"></div>
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-3 d-flex justify-content-center">
                     <div class="card card-close">
                         <div class="card-front"></div>
                         <div class="card-back"></div>
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-3 d-flex justify-content-center">
                     <div class="card card-close">
                         <div class="card-front"></div>
                         <div class="card-back"></div>
@@ -256,7 +298,7 @@
                         let time = 0
                         const timer = setInterval(() => {
                             time++
-                            $('#time').text(`經過時間：${time}秒`)
+                            $('#time').text(time)
                         }, 1000)
 
 
