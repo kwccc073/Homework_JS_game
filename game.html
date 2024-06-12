@@ -15,7 +15,7 @@
         }
 
         #main {
-            background: yellow;
+            /* background: yellow; */
             position: relative;
             width: 80vw;
             height: 80vh;
@@ -43,26 +43,27 @@
             /* visibility: hidden; */
         }
 
-        .title {
-            font-size: 100px;
+        .title img{
+            width: 100%;
         }
 
+
         .title-shrink {
-            font-size: 50px;
+            width: 50%;
         }
 
         /* 排列成4*5 .Arrangement*/
         #game {
             width: 100%;
             height: 75%;
-            background: darkcyan;
+            /* background: darkcyan; */
             position: absolute;
             top: 15%;
         }
 
         .card {
-            width: 50px;
-            height: 90px;
+            width: 100px;
+            height: 100px;
             position: relative;
             margin: 10px;
             /* 設定子元素在3D空間內 */
@@ -70,9 +71,6 @@
             /* 使他們並排 */
             float: left;
             transition: transform 1s;
-            /* top: 0px;
-            left: 0px; */
-
         }
 
         .card-front {
@@ -80,17 +78,19 @@
             height: 100%;
             background: white;
             position: absolute;
+            text-align: center;
+            font-size: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             /* 把背面隱藏 */
             backface-visibility: hidden;
-            text-align: center;
-            /* 垂直置中 */
-            font-size: 35px;
         }
 
         .card-back {
             width: 100%;
             height: 100%;
-            background-image: url(./img/blue_back.jpg);
+            background-image: url(./img/card-back.jpg);
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -104,40 +104,51 @@
             transform: rotateY(180deg);
         }
 
-        /* 滑過卡片可加特效 */
+        /* 滑鼠滑過卡片產生陰影 */
         .card:hover {
-            box-shadow: 0 0 5px black;
-        }
-        /* 計時器----------------------------------------------------- */
-
-        #time{
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: blue;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: aliceblue;
-            font-size: 50px;
-            position: absolute;
-            top:50%;
-            left: 1%;
-            transform: translate(0%, -50%);
+            box-shadow: 0 0 5px red;
         }
 
-        /* 進度條----------------------------------------------------- */
-        #progress {
+        /* 遊戲區下方區塊----------------------------------------------- */
+        #footer{
             width: 100%;
-            height: 30px;
+            height: 10%;
             position: absolute;
             top: 90%;
+            /* background: palevioletred; */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        
+        /* 進度條 */
+        #progress {
+            width: 80%;
+            height: 30px;
         }
 
         #progress-bar {
             width: 0%;
-            background-color: rebeccapurple;
+            background-color: rgb(247, 70, 0);
         }
+
+        /* 計時器 */
+        #time{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid rgb(200, 0, 0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            /* position: absolute;
+            top:50%;
+            left: 1%;
+            transform: translate(0%, -50%); */
+        }
+
     </style>
 </head>
 
@@ -147,7 +158,9 @@
         -->
     <div id="main">
         <div class="game-title d-flex flex-column justify-content-center align-items-center ">
-            <div class="title">日本語のゲーム</div>
+            <div class="title">
+                <img src="./img/title.gif">
+            </div>
             <!-- 選擇要玩的遊戲 -->
             <form>
                 <span>請選擇題目：</span>
@@ -158,8 +171,7 @@
                 </select>
                 <input type="submit" value="開始遊戲" class="game_btn">
             </form>
-        <!-- 計時器 -->
-        <div id="time" class="hidden">0</div>
+
         </div>
 
         <!-- 答對題數 -->
@@ -169,9 +181,13 @@
         <!-- 遊戲區域 -->
         <div id="game" class="hidden container-fluid"></div>
 
-        <!-- 進度條 -->
-        <div id="progress" class="progress hidden mt-1">
-            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"></div>
+        <div id="footer">
+            <!-- 進度條 -->
+            <div id="progress" class="progress hidden">
+                <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"></div>
+            </div>
+            <!-- 計時器 -->
+            <div id="time" class="hidden">0</div>
         </div>
     </div>
     <!-- 進度條可參考bootstrap 0607的檔案7 https://bootstrap5.hexschool.com/docs/5.1/components/progress/ -->
@@ -345,6 +361,7 @@
                                         clearInterval(timer)
                                         alert(`恭喜過關，總共花費${time}秒`)
                                         // 可加放煙火動畫
+                                        // 遊戲結束按alert上的按鈕又可以重新開始
                                     }
                                 }, 1000)
                             }
