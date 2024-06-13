@@ -107,6 +107,7 @@
         /* 滑鼠滑過卡片產生陰影 */
         .card:hover {
             box-shadow: 0 0 5px red;
+            cursor: pointer;
         }
 
         /* 遊戲區下方區塊----------------------------------------------- */
@@ -360,8 +361,17 @@
                                     ) {
                                         clearInterval(timer)
                                         alert(`恭喜過關，總共花費${time}秒`)
-                                        // 可加放煙火動畫
-                                        // 遊戲結束按alert上的按鈕又可以重新開始
+                                        // 清除畫面
+                                        $('#game').text('')
+                                        // 計時器歸零
+                                        $('#time').text(0)
+
+                                        // 進度條歸零
+                                        $('.progress-bar').css('width', `0%`)
+
+                                        // 使按鈕、選單可用
+                                        $('.game_btn').attr('disabled', false)
+                                        $('#choice-game').attr('disabled', false)
                                     }
                                 }, 1000)
                             }

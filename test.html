@@ -96,18 +96,47 @@
             width: 0%;
             background-color: rebeccapurple;
         }
+
+        /* 結束視窗 */
     </style>
 </head>
 
 <body>
     <div id="main">
         <!-- 遊戲標題 -->
-        <div class="game-title shrink-move "></div>
+        <!-- <div class="game-title shrink-move "></div> -->
         <!-- 遊戲區域 -->
-        <div id="game" class="container-fluid"></div>
+        <!-- <div id="game" class="container-fluid"></div> -->
         <!-- 進度條 -->
-        <div id="progress" class="progress">
-            <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
+        <!-- <div id="progress" class="progress"> -->
+        <!-- <div class="progress-bar progress-bar-striped progress-bar-animated"></div> -->
+        <!-- </div> -->
+
+        <!-- 結束視窗 -->
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            產生互動視窗
+        </button>
+
+        <!-- Modal -->
+        <div id="game-over" class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+            tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                        <!-- 叉叉按鈕 -->
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                        <button type="button" class="btn btn-primary">重新開始</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
