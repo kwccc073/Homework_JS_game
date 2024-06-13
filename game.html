@@ -34,13 +34,13 @@
             text-align: center;
             transition: all 1s ease-in-out;
             z-index: 5;
+            background: rgba(0, 0, 1, 0.1);
         }
 
         .shrink-move {
             top: 0;
             transform: translate(0%, 0%);
-            height: 15%;
-            /* visibility: hidden; */
+            height: 20%;
         }
 
         .title img{
@@ -49,21 +49,21 @@
 
 
         .title-shrink {
-            width: 50%;
+            width: 45%;
         }
 
         /* 排列成4*5 .Arrangement*/
         #game {
             width: 100%;
-            height: 75%;
+            height: 60%;
             /* background: darkcyan; */
             position: absolute;
-            top: 15%;
+            top: 20%;
         }
 
         .card {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             position: relative;
             margin: 10px;
             /* 設定子元素在3D空間內 */
@@ -115,7 +115,7 @@
             width: 100%;
             height: 10%;
             position: absolute;
-            top: 90%;
+            top: 85%;
             /* background: palevioletred; */
             display: flex;
             justify-content: space-around;
@@ -154,9 +154,6 @@
 </head>
 
 <body>
-    <!-- 待新增功能：
-        發牌動畫（感覺麻煩，先不要加）
-        -->
     <div id="main">
         <div class="game-title d-flex flex-column justify-content-center align-items-center ">
             <div class="title">
@@ -228,34 +225,40 @@
 
 
             // 產生二十張卡片
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 4; i++) {
                 $('#game').append(`
-                        <div class="row">
-                <div class="col-3 d-flex justify-content-center">
-                    <div class="card card-close">
-                        <div class="card-front"></div>
-                        <div class="card-back"></div>
+                <div class="row d-flex justify-content-center">
+                    <div class="col-2 d-flex justify-content-center">
+                        <div class="card card-close">
+                            <div class="card-front"></div>
+                            <div class="card-back"></div>
+                        </div>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <div class="card card-close">
+                            <div class="card-front"></div>
+                            <div class="card-back"></div>
+                        </div>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <div class="card card-close">
+                            <div class="card-front"></div>
+                            <div class="card-back"></div>
+                        </div>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <div class="card card-close">
+                            <div class="card-front"></div>
+                            <div class="card-back"></div>
+                        </div>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <div class="card card-close">
+                            <div class="card-front"></div>
+                            <div class="card-back"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-3 d-flex justify-content-center">
-                    <div class="card card-close">
-                        <div class="card-front"></div>
-                        <div class="card-back"></div>
-                    </div>
-                </div>
-                <div class="col-3 d-flex justify-content-center">
-                    <div class="card card-close">
-                        <div class="card-front"></div>
-                        <div class="card-back"></div>
-                    </div>
-                </div>
-                <div class="col-3 d-flex justify-content-center">
-                    <div class="card card-close">
-                        <div class="card-front"></div>
-                        <div class="card-back"></div>
-                    </div>
-                </div>
-            </div>
             `)
             }
 
@@ -300,14 +303,12 @@
 
 
 
-            // 一層包一層是讓一個計時器完成才進行下一個計時器
             setTimeout(function () {
-                // 按下按鈕後一秒會將全部的牌打開
+                // 按下按鈕1.2秒後會將全部的牌打開
                 $('.card').removeClass('card-close')
-                // 再過兩秒會將牌關起來
+                // 過3秒會將牌關起來
                 setTimeout(function () {
                     $('.card').addClass('card-close')
-                    // 關起來一秒後會開始計時
                     setTimeout(() => {
                         alert('遊戲開始')
 
@@ -319,12 +320,10 @@
                         }, 1000)
 
 
-                        // 開始計時之後才開始進行翻牌的判斷
-
+                        // 開始計時之後開始進行翻牌的判斷
                         // 答對題數
                         let bingo = 0
 
-                        // 這裡的.card已經出現，所以不需要用on
                         $('.card').click(function () {
                             // 翻牌動作
                             if (
@@ -361,7 +360,7 @@
                                     ) {
                                         clearInterval(timer)
                                         alert(`恭喜過關，總共花費${time}秒`)
-                                        // 清除畫面
+                                        // 清除遊戲區域
                                         $('#game').text('')
                                         // 計時器歸零
                                         $('#time').text(0)
@@ -377,8 +376,8 @@
                             }
                         })
                     }, 1000);
-                }, 2000)
-            }, 1000)
+                }, 3000)
+            }, 1200)
         })
 
 
