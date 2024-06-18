@@ -8,14 +8,11 @@
     <!-- 引入bootstrap -->
     <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.css />
     <style>
-        /* 卡片慢一點出現 */
-
         .hidden {
             visibility: hidden;
         }
 
         #main {
-            /* background: yellow; */
             position: relative;
             width: 80vw;
             height: 80vh;
@@ -23,10 +20,10 @@
             margin: auto;
         }
 
+        /* 標題區--------------------------------------------------------------------- */
         .game-title {
             width: 100%;
             height: 30%;
-            /* background: darkgoldenrod; */
             position: absolute;
             left: 0;
             top: 50%;
@@ -43,7 +40,7 @@
             height: 20%;
         }
 
-        .title img{
+        .title img {
             width: 100%;
         }
 
@@ -52,15 +49,15 @@
             width: 45%;
         }
 
-        /* 排列成4*5 .Arrangement*/
+        /* 遊戲區----------------------------------------------------------------------- */
         #game {
             width: 100%;
             height: 60%;
-            /* background: darkcyan; */
             position: absolute;
             top: 20%;
         }
 
+        /* 卡片 */
         .card {
             width: 120px;
             height: 120px;
@@ -111,7 +108,7 @@
         }
 
         /* 遊戲區下方區塊----------------------------------------------- */
-        #footer{
+        #footer {
             width: 100%;
             height: 10%;
             position: absolute;
@@ -122,7 +119,7 @@
             align-items: center;
         }
 
-        
+
         /* 進度條 */
         #progress {
             width: 80%;
@@ -135,7 +132,7 @@
         }
 
         /* 計時器 */
-        #time{
+        #time {
             width: 100px;
             height: 100px;
             border-radius: 50%;
@@ -149,17 +146,16 @@
             left: 1%;
             transform: translate(0%, -50%); */
         }
-
     </style>
 </head>
 
 <body>
     <div id="main">
+        <!-- 標題區 -->
         <div class="game-title d-flex flex-column justify-content-center align-items-center ">
             <div class="title">
                 <img src="./img/title.gif">
             </div>
-            <!-- 選擇要玩的遊戲 -->
             <form>
                 <span>請選擇題目：</span>
                 <select id="choice-game">
@@ -172,12 +168,9 @@
 
         </div>
 
-        <!-- 答對題數 -->
-        <!-- <p id="bingo" class="hidden">已答對0題，剩餘10題</p> -->
-
-
         <!-- 遊戲區域 -->
-        <div id="game" class="hidden container-fluid"></div>
+        <div id="game" class="hidden container-fluid bg-danger text-center">
+        </div>
 
         <div id="footer">
             <!-- 進度條 -->
@@ -188,7 +181,6 @@
             <div id="time" class="hidden">0</div>
         </div>
     </div>
-    <!-- 進度條可參考bootstrap 0607的檔案7 https://bootstrap5.hexschool.com/docs/5.1/components/progress/ -->
 
     <!-- 引入JQ -->
     <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js></script>
@@ -214,66 +206,41 @@
             $(this).attr('disabled', true)
             $('#choice-game').attr('disabled', true)
 
-            // 遊戲標題區移動至最上方
+            // 遊戲標題區塊移動至最上方
             $('.game-title').addClass('shrink-move')
-            // 標題區裡的文字縮小
+            // 縮小標題區裡的文字
             $('.title').addClass('title-shrink')
 
-
-            // 顯示剩餘時間、已答對題數、進度條
+            // 顯示計時器、進度條、遊戲區
             $('.hidden').removeClass('hidden')
 
 
             // 產生二十張卡片
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 20; i++) {
                 $('#game').append(`
-                <div class="row d-flex justify-content-center">
-                    <div class="col-2 d-flex justify-content-center">
+                    <div class="card-container">
                         <div class="card card-close">
                             <div class="card-front"></div>
                             <div class="card-back"></div>
                         </div>
                     </div>
-                    <div class="col-2 d-flex justify-content-center">
-                        <div class="card card-close">
-                            <div class="card-front"></div>
-                            <div class="card-back"></div>
-                        </div>
-                    </div>
-                    <div class="col-2 d-flex justify-content-center">
-                        <div class="card card-close">
-                            <div class="card-front"></div>
-                            <div class="card-back"></div>
-                        </div>
-                    </div>
-                    <div class="col-2 d-flex justify-content-center">
-                        <div class="card card-close">
-                            <div class="card-front"></div>
-                            <div class="card-back"></div>
-                        </div>
-                    </div>
-                    <div class="col-2 d-flex justify-content-center">
-                        <div class="card card-close">
-                            <div class="card-front"></div>
-                            <div class="card-back"></div>
-                        </div>
-                    </div>
-                </div>
             `)
             }
 
+
+
             // 隨機分配花色
-            // random陣列用於避免取道重複的花色
+            // random陣列用於避免取到重複的花色
             let random = []
             // 總共取出十組花色 (20/2=10)
             for (let i = 0; i < 10; i++) {
-                // 隨機取一個數字做為花色陣列之index
+                // 隨機取一個數字做為花色之index
                 let randomNumber = Math.round(Math.random() * 45)
 
                 // 如果這個數字還沒出現過，則進行下方步驟
                 if (!random.includes(randomNumber)) {
                     random.push(randomNumber)
-                    // 前面十張是平片假名(index為 0-9)
+                    // 前面十張(index 0-9)是平or片假名
                     // 選擇平假名關卡
                     if ($("#choice-game").val() === "Hiragana") {
                         $('.card-front').eq(i).text(Hiragana[randomNumber])
@@ -283,7 +250,7 @@
                         $('.card-front').eq(i).text(Katakana[randomNumber])
                     }
                     $('.card-front').eq(i).attr('data-number', randomNumber)
-                    //後面十張是羅馬拼音(index為 10-19)
+                    //後面十張(index 10-19)是羅馬拼音
                     $('.card-front').eq(i + 10).text(Pinyin[randomNumber])
                     $('.card-front').eq(i + 10).attr('data-number', randomNumber)
                 } else {
@@ -292,15 +259,21 @@
             }
 
             // 打亂牌
-            // for (let i = 0; i < 20; i++) {
-            //     const randA = Math.round(Math.random() * 19)
-            //     const randB = Math.round(Math.random() * 19)
-            //     $('.card').eq(randA).insertAfter($('.card').eq(randB))
-            // }
+            for (let i = 0; i < 20; i++) {
+                const randA = Math.round(Math.random() * 19)
+                const randB = Math.round(Math.random() * 19)
+                $('.card').eq(randA).insertAfter($('.card').eq(randB))
+            }
 
-            // 發牌動畫（移動位置）
-            // $('.card').attr('top', '100px')
+            // 卡片排版
+            $('.card-container').addClass('col-2', 'd-flex', 'justify-content-center')
 
+            // 待編輯******************************************
+            // 每五個一排
+            for (let i = 0; i < $('.card-container').length; i += 5) {
+                // 包裹元素
+                $divs.slice(i, i + 4).wrapAll('<div class="row"></div>');
+            }
 
 
             setTimeout(function () {
