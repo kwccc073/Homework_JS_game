@@ -8,14 +8,11 @@
     <!-- 引入bootstrap -->
     <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.css />
     <style>
-        /* 卡片慢一點出現 */
-
         .hidden {
             visibility: hidden;
         }
 
         #main {
-            /* background: yellow; */
             position: relative;
             width: 80vw;
             height: 80vh;
@@ -26,7 +23,6 @@
         .game-title {
             width: 100%;
             height: 30%;
-            /* background: darkgoldenrod; */
             position: absolute;
             left: 0;
             top: 50%;
@@ -43,7 +39,7 @@
             height: 20%;
         }
 
-        .title img{
+        .title img {
             width: 100%;
         }
 
@@ -52,7 +48,6 @@
             width: 45%;
         }
 
-        /* 排列成4*5 .Arrangement*/
         #game {
             width: 100%;
             height: 60%;
@@ -111,18 +106,17 @@
         }
 
         /* 遊戲區下方區塊----------------------------------------------- */
-        #footer{
+        #footer {
             width: 100%;
             height: 10%;
             position: absolute;
             top: 85%;
-            /* background: palevioletred; */
             display: flex;
             justify-content: space-around;
             align-items: center;
         }
 
-        
+
         /* 進度條 */
         #progress {
             width: 80%;
@@ -135,7 +129,7 @@
         }
 
         /* 計時器 */
-        #time{
+        #time {
             width: 100px;
             height: 100px;
             border-radius: 50%;
@@ -144,12 +138,7 @@
             justify-content: center;
             align-items: center;
             font-size: 50px;
-            /* position: absolute;
-            top:50%;
-            left: 1%;
-            transform: translate(0%, -50%); */
         }
-
     </style>
 </head>
 
@@ -165,16 +154,11 @@
                 <select id="choice-game">
                     <option value="Hiragana">平假名</option>
                     <option value="Katakana">片假名</option>
-                    <!-- 有時間的話再加單字題 -->
                 </select>
                 <input type="submit" value="開始遊戲" class="game_btn">
             </form>
 
         </div>
-
-        <!-- 答對題數 -->
-        <!-- <p id="bingo" class="hidden">已答對0題，剩餘10題</p> -->
-
 
         <!-- 遊戲區域 -->
         <div id="game" class="hidden container-fluid"></div>
@@ -188,7 +172,6 @@
             <div id="time" class="hidden">0</div>
         </div>
     </div>
-    <!-- 進度條可參考bootstrap 0607的檔案7 https://bootstrap5.hexschool.com/docs/5.1/components/progress/ -->
 
     <!-- 引入JQ -->
     <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js></script>
@@ -220,50 +203,25 @@
             $('.title').addClass('title-shrink')
 
 
-            // 顯示剩餘時間、已答對題數、進度條
+            // 顯示遊戲區域、剩餘時間、已答對題數、進度條
             $('.hidden').removeClass('hidden')
 
 
             // 產生二十張卡片
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 20; i++) {
                 $('#game').append(`
-                <div class="row d-flex justify-content-center">
-                    <div class="col-2 d-flex justify-content-center">
+                    <div class="card-container col-2 d-flex justify-content-center">
                         <div class="card card-close">
                             <div class="card-front"></div>
                             <div class="card-back"></div>
                         </div>
                     </div>
-                    <div class="col-2 d-flex justify-content-center">
-                        <div class="card card-close">
-                            <div class="card-front"></div>
-                            <div class="card-back"></div>
-                        </div>
-                    </div>
-                    <div class="col-2 d-flex justify-content-center">
-                        <div class="card card-close">
-                            <div class="card-front"></div>
-                            <div class="card-back"></div>
-                        </div>
-                    </div>
-                    <div class="col-2 d-flex justify-content-center">
-                        <div class="card card-close">
-                            <div class="card-front"></div>
-                            <div class="card-back"></div>
-                        </div>
-                    </div>
-                    <div class="col-2 d-flex justify-content-center">
-                        <div class="card card-close">
-                            <div class="card-front"></div>
-                            <div class="card-back"></div>
-                        </div>
-                    </div>
-                </div>
             `)
             }
 
+
             // 隨機分配花色
-            // random陣列用於避免取道重複的花色
+            // random陣列用於避免取到重複的花色
             let random = []
             // 總共取出十組花色 (20/2=10)
             for (let i = 0; i < 10; i++) {
@@ -292,27 +250,28 @@
             }
 
             // 打亂牌
-            // for (let i = 0; i < 20; i++) {
-            //     const randA = Math.round(Math.random() * 19)
-            //     const randB = Math.round(Math.random() * 19)
-            //     $('.card').eq(randA).insertAfter($('.card').eq(randB))
-            // }
+            for (let i = 0; i < 40; i++) {
+                const randA = Math.round(Math.random() * 19)
+                const randB = Math.round(Math.random() * 19)
+                $('.card-container').eq(randA).insertAfter($('.card-container').eq(randB))
+            }
 
-            // 發牌動畫（移動位置）
-            // $('.card').attr('top', '100px')
-
+            // 排版（每五張一排）
+            for (let i = 0; i < $('.card-container').length ; i += 5) {
+                $('.card-container').slice(i, i + 5).wrapAll('<div class="row d-flex justify-content-center"></div>');
+            }
 
 
             setTimeout(function () {
                 // 按下按鈕1.2秒後會將全部的牌打開
                 $('.card').removeClass('card-close')
-                // 過3秒會將牌關起來
+                // 再過3秒會將牌關起來
                 setTimeout(function () {
                     $('.card').addClass('card-close')
                     setTimeout(() => {
                         alert('遊戲開始')
 
-                        // 倒數計時
+                        // 開始計時
                         let time = 0
                         const timer = setInterval(() => {
                             time++
@@ -321,8 +280,7 @@
 
 
                         // 開始計時之後開始進行翻牌的判斷
-                        // 答對題數
-                        let bingo = 0
+                        let bingo = 0 // 答對題數
 
                         $('.card').click(function () {
                             // 翻牌動作
@@ -355,8 +313,7 @@
                                     $('.card:not(.card-close)').addClass('card-close')
                                     // 當全部答對，結束計時並顯示alert
                                     if (
-                                        // 正確值：($('.card-ok').length === $('.card').length)，下方=4是暫時測試用
-                                        $('.card-ok').length === 4
+                                        $('.card-ok').length === $('.card').length
                                     ) {
                                         clearInterval(timer)
                                         alert(`恭喜過關，總共花費${time}秒`)
@@ -368,7 +325,7 @@
                                         // 進度條歸零
                                         $('.progress-bar').css('width', `0%`)
 
-                                        // 使按鈕、選單可用
+                                        // 使按鈕、選單重新啟用
                                         $('.game_btn').attr('disabled', false)
                                         $('#choice-game').attr('disabled', false)
                                     }
