@@ -49,14 +49,25 @@
             width: 45%;
         }
 
-        #game {
+        /* 卡片區塊 + 進度條及計時器 */
+        #game-container {
             width: 100%;
-            height: 60%;
+            height: 65vh;
             position: absolute;
             top: 20%;
+            /* background: cadetblue; */
         }
 
-        /* 卡片 */
+        /* 卡片區塊---------------------------------------------------- */
+        #game {
+            width: 100%;
+            height: 90%;
+            position: relative;
+            /* top: 20%;  */
+            /* background: chartreuse; */
+        }
+
+        /* 卡片--------------------------------------------------------*/
         .card {
             width: 120px;
             height: 120px;
@@ -102,7 +113,7 @@
 
         /* 滑鼠滑過卡片產生陰影 */
         .card:hover {
-            box-shadow: 0 0 5px red;
+            /* box-shadow: 0 0 5px red; */
             cursor: pointer;
         }
 
@@ -110,11 +121,12 @@
         #footer {
             width: 100%;
             height: 10%;
-            position: absolute;
-            top: 85%;
+            position: relative;
+            /* top: 85%; */
             display: flex;
             justify-content: space-around;
             align-items: center;
+            /* background: chocolate; */
         }
 
 
@@ -163,16 +175,18 @@
         </div>
 
         <!-- 遊戲區域 -->
-        <div id="game" class="hidden container-fluid text-center">
-        </div>
-
-        <div id="footer">
-            <!-- 進度條 -->
-            <div id="progress" class="progress hidden">
-                <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"></div>
+        <div id="game-container">
+            <div id="game" class="hidden container-fluid text-center">
             </div>
-            <!-- 計時器 -->
-            <div id="time" class="hidden">0</div>
+
+            <div id="footer">
+                <!-- 進度條 -->
+                <div id="progress" class="progress hidden">
+                    <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"></div>
+                </div>
+                <!-- 計時器 -->
+                <div id="time" class="hidden">0</div>
+            </div>
         </div>
     </div>
 
@@ -260,7 +274,7 @@
             }
 
             // 排版（每五張一排）
-            for (let i = 0; i < $('.card-container').length ; i += 5) {
+            for (let i = 0; i < $('.card-container').length; i += 5) {
                 $('.card-container').slice(i, i + 5).wrapAll('<div class="row d-flex justify-content-center"></div>');
             }
 
